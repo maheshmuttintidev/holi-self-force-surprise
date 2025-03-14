@@ -1,4 +1,6 @@
+'use client';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 
 interface PageProps {
@@ -9,14 +11,25 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {    const {timestamp} = params;
 
-  if (!timestamp) {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Retrieve the image from localStorage using the timestamp
+    const storedImage = localStorage.getItem(`image_${timestamp}`);
+    if (storedImage) {
+      setImageUrl(storedImage);
+    }
+  }, [timestamp]);
+
+
+  if (!imageUrl) {
     return <p>Loading...</p>;
   }
 
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-<Image src="/1741938558354.png" alt="Holi Celebration" width={640} height={480} />    </div>
+<Image src={imageUrl} alt="Holi Celebration" fill={true} />    </div>
   );
 };
 

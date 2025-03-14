@@ -79,4 +79,38 @@
   body {
     @apply bg-background text-foreground;
   }
+
+.apply-holi-button, .capture-photo-button {
+  border-image: linear-gradient(45deg, red, yellow, green, blue, purple) 1;
+  border-width: 3px;
+  border-style: solid;
+  animation: blink 1s infinite alternate;
+  color: 'white';
 }
+
+@keyframes blink {
+  0% {
+    background-color: rgba(255, 255, 255, 0.7);
+    color: 'black';
+  }
+  50% {
+    background-color: rgba(255, 0, 0, 0.7);
+    color: 'white';
+  }
+  100% {
+    background-color: rgba(0, 0, 255, 0.7);
+    color: 'white';
+  }
+}
+
+@keyframes flash {
+  0% {
+    border-color: transparent;
+  }
+  100% {
+    border-color: yellow;
+  }
+}
+}
+
+

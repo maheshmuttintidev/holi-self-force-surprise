@@ -1,13 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 const HomePage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isCaptured, setIsCaptured] = useState(false);
+  const [isHoliApplied, setIsHoliApplied] = useState(false); // Track Holi effect status
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const startCamera = async () => {
@@ -46,42 +49,24 @@ const HomePage = () => {
           ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 50, 0, Math.PI * 2);
           ctx.fill();
         }
+        setIsHoliApplied(true); // Set status when Holi effect is applied
       }
     }
   };
-// Your existing client-side code
-const capturePhoto = async () => {
-  if (canvasRef.current) {
-    const dataUrl = canvasRef.current.toDataURL('image/png');
-    setImageUrl(dataUrl);
-    setIsCaptured(true);
 
-    // Create a temporary link element to open the image in a new tab
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = 'captured-image.png'; // Set the filename for download
-    link.target = '_blank'; // Open in a new tab
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link); // Clean up the link after the download
-  }
-};
+  const capturePhoto = async () => {
+    if (canvasRef.current) {
+      const dataUrl = canvasRef.current.toDataURL('image/png');
+      setImageUrl(dataUrl);
 
+      // Store the base64 image in localStorage
+      const timestamp = Date.now().toString(); // Use timestamp as the identifier
+      localStorage.setItem(`image_${timestamp}`, dataUrl);
 
-
-  useEffect(() => {
-    const videoElement = videoRef.current;
-    if (videoElement) {
-      const onPlaying = () => {
-        applyHoliEffects();
-      };
-      videoElement.addEventListener('playing', onPlaying);
-
-      return () => {
-        videoElement.removeEventListener('playing', onPlaying);
-      };
+      // Redirect to the page with the image
+      router.push(`/photo/${timestamp}`);
     }
-  }, []);
+  };
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
@@ -131,40 +116,44 @@ const capturePhoto = async () => {
             </div>
           )}
         </div>: null}
-      {!isCaptured ? (
-        <div className=''>
-          <button
-            onClick={applyHoliEffects}
-            style={{
-              position: 'absolute',
-              top: '20px',
-              left: '20px',
-              padding: '10px 20px',
-              fontSize: '16px',
-              backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Apply Holi Effects
-          </button>
-          <button
-            onClick={capturePhoto}
-            style={{
-              position: 'absolute',
-              top: '20px',
-              left: '220px',
-              padding: '10px 20px',
-              fontSize: '16px',
-              backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Capture Photo
-          </button>
-        </div>
-      ) : null}
+
+      {!isHoliApplied ? (
+        <button
+          onClick={applyHoliEffects}
+          style={{
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            padding: '10px 20px',
+            fontSize: '16px',
+            border: '2px solid transparent',
+            animation: 'blink 2s infinite alternate, flash 1s infinite alternate',
+            cursor: 'pointer',
+            color: 'white'
+          }}
+          className='apply-holi-button rounded-md'
+        >
+          Apply Holi Effects
+        </button>
+      ) : (
+        <button
+          onClick={capturePhoto}
+          style={{
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            padding: '10px 20px',
+            fontSize: '16px',
+            border: '2px solid transparent',
+            animation: 'blink 2s infinite alternate, flash 1s infinite alternate',
+            cursor: 'pointer',
+            color: 'white'
+          }}
+          className='capture-photo-button rounded-md'
+        >
+          Capture Photo
+        </button>
+      )}
     </div>
   );
 };
