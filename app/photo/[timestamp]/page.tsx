@@ -1,35 +1,53 @@
 'use client';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-
+import { use } from 'react';
 
 interface PageProps {
-  params: {
-    timestamp: string; // Define the type of the dynamic segment
-  };
+  params: Promise<{ timestamp: string }>; // params is now a Promise
 }
 
-export default function Page({ params }: PageProps) {    const {timestamp} = params;
-
+export default function Page({ params }: PageProps) {
+  const unwrappedParams = use(params); // Unwrap the Promise
+  const { timestamp } = unwrappedParams;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Retrieve the image from localStorage using the timestamp
-    const storedImage = localStorage.getItem(`image_${timestamp}`);
-    if (storedImage) {
-      setImageUrl(storedImage);
+    if (typeof window !== 'undefined') {
+      const storedImage = localStorage.getItem(`image_${timestamp}`);
+      if (storedImage) {
+        setImageUrl(storedImage);
+      }
+      setLoading(false);
     }
   }, [timestamp]);
 
-
-  if (!imageUrl) {
-    return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
+  if (!imageUrl) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <p>Image not found.</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-<Image src={imageUrl} alt="Holi Celebration" fill={true} />    </div>
+    <div className="relative h-screen w-full">
+      <Image
+        src={imageUrl}
+        alt="Holi Celebration"
+        fill
+        style={{ objectFit: 'cover' }}
+        priority
+      />
+    </div>
   );
-};
-
+}
