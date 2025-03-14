@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
 
 interface PageProps {
   params: Promise<{ timestamp: string }>; // params is now a Promise
@@ -45,7 +44,7 @@ export default function Page({ params }: PageProps) {
         src={imageUrl}
         alt="Holi Celebration"
         fill
-        style={{ objectFit: 'cover' }}
+        style={{ objectFit: 'contain' }}
         priority
       />
     </div>
