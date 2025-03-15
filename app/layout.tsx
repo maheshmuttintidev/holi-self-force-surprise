@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   title: {
     template: '%s | Holi Self Force Surprise',
     default: 'Holi Self Force Surprise'
-  },metadataBase: new URL('https://holi-self-force-surprise.maheshmuttintidev.in'),
+  },
+  metadataBase: new URL('https://holi-self-force-surprise.maheshmuttintidev.in'),
   alternates: {
     canonical: '/',
   },
@@ -53,6 +54,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Holi Self Force Surprise" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
